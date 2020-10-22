@@ -1,0 +1,48 @@
+.container-my{
+  width: 60%;
+  margin: 0 auto;
+}
+label {
+  font-weight: bold;
+}
+
+.update{
+  margin-left: 20px;;
+}
+
+span{
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.d-flex input{
+  margin: 1.7em 0em;
+}
+
+.d-flex button{
+  margin: 1.5em .6em;
+  padding: .3em 2.4em;
+}
+
+.container table{
+  margin: 1em 10em;
+}
+
+table .btnEdit{
+  color: lightgreen;
+  cursor: pointer;
+}
+
+table .delBtn{
+  color: tomato;
+  cursor: pointer;
+}
+
+table .downBtn {
+  color: rgb(49, 127, 218);
+  cursor: pointer;
+}
+
+.form{
+  display: none;
+}
