@@ -41,7 +41,6 @@ function doFile(e) {
   let name = file.name;
   let type = file.type;
   let date = file.lastModifiedDate.toLocaleDateString();
-  console.log("=====================");
 
   var reader = new FileReader();
   //				reader.readAsDataURL(file);
@@ -68,7 +67,7 @@ function doFile(e) {
     reader.onload = function (e) {
       //alert(e.target.result);
       let bits = e.target.result;
-      bits = bits; //console.log(bits + " ->IMG") 
+      bits = bits; 
       setTimeout(() => {
         if (w > h) {
           album = "портрет";
@@ -110,16 +109,14 @@ function doImageTest() {
   let trans = db.transaction(['images'], 'readonly');
   //hard coded id
   let req = trans.objectStore('images').getAll();
-  //let req = trans.objectStore('cachedForms').get(1); console.log(req);
   req.onsuccess = (e) => {
     let records = e.target.result;
     for (let i = 0; i < records.length; i++) {
       if (records[i].bits === undefined) {
         var bits = "./nofile.png";
-        console.log("NO FILED")
       } else {
         if ((/data:image/).test(records[i].bits)) {
-          var bits = records[i].bits; console.log("NOOOOO")
+          var bits = records[i].bits; 
         } else {
           var bits = "data:image/jpeg;base64," + btoa(records[i].bits);
         }
@@ -217,9 +214,7 @@ $("#btn-update").on("click", async function (event) {
 
       var img;
       reader.onload = function (e) {
-        //alert(e.target.result);
         img = e.target.result;
-        //console.log(img + "IMages")
       }
     } else {
       alert("Неверный формат!!!")
@@ -286,6 +281,5 @@ function downImg(id) {
       $('#save').html('<a class="save" href="' +'data:image/jpeg;base64,'+ btoa(rec.bits) + '" download="' + rec.name + '"></a>');
     }
     document.getElementsByClassName("save")[0].click();
-    console.log(rec + " RED")
   }
 }
