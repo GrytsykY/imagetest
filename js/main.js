@@ -21,7 +21,7 @@ function initDb() {
   }
 
   request.onsuccess = function (e) {
-    db = e.target.result; 
+    db = e.target.result;
     doImageTest();
     console.log('db opened');
   }
@@ -104,7 +104,7 @@ function doFile(e) {
 }
 
 function doImageTest() {
-  
+
   var content = $('tbody#tbody');
   content.empty();
   let trans = db.transaction(['images'], 'readonly');
@@ -135,7 +135,7 @@ function doImageTest() {
         + records[i].w + '</td><td>'
         + records[i].h + '</td><td><i class="fas fa-edit btnEdit" onclick="edit(' + records[i].id + ')">'
         + '</i></td><td><i class="fas fa-trash-alt delBtn" onclick="deleteBtn(' + records[i].id + ')"></i></td>' +
-        '</i></td><td><i class="fas fa-download downBtn"></i></td>' +
+        '</i></td><td><i class="fas fa-download downBtn" onclick="downImg(' + records[i].id + ')"></i></td>' +
         '</tr>\
       ');
     }
@@ -258,12 +258,6 @@ function addEdit(id, img, name, size, type, date, w, h) {
       updated: new Date(), id: Number(id)
     });
   $('.form').css('display', 'none');
-
-  t.oncomplete = function (event) {
-    $("#id").val("");
-    $("#name").val("");
-    $("#size").val("");
-  };
 }
 
 btnDelete.onclick = (e) => {
@@ -281,7 +275,17 @@ function deleteBtn(id) {
   doImageTest();
 }
 
-// var link = document.createElement('a');
-// link.setAttribute('href', 'http://url.ru/image.jpg');
-// link.setAttribute('download','download.jpg');
-// link.click();
+function downImg(id) {
+  let trans = db.transaction(['images'], 'readonly');
+  let req = trans.objectStore('images').get(id);
+  req.onsuccess = (e) => {
+    var rec = e.target.result;
+    if ((/data:image/i).test(rec.bits)) {
+      $('#save').html('<a class="save" href="' + rec.bits + '" download="' + rec.name + '"></a>');
+    } else {
+      $('#save').html('<a class="save" href="' +'data:image/jpeg;base64,'+ btoa(rec.bits) + '" download="' + rec.name + '"></a>');
+    }
+    document.getElementsByClassName("save")[0].click();
+    console.log(rec + " RED")
+  }
+}
