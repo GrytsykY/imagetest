@@ -9,7 +9,9 @@ const btnUpdate = document.getElementById("btn-update");
 document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('#pictureTest').addEventListener('change', doFile);
-  initDb();
+  let d = initDb();
+
+  console.log(d + " D")
 });
 
 
@@ -23,7 +25,8 @@ function initDb() {
   request.onsuccess = function (e) {
     db = e.target.result;
     doImageTest();
-    console.log('db opened');
+
+    console.log(' db opened');
   }
 
   request.onupgradeneeded = function (e) {
@@ -67,7 +70,7 @@ function doFile(e) {
     reader.onload = function (e) {
       //alert(e.target.result);
       let bits = e.target.result;
-      bits = bits; 
+      bits = bits;
       setTimeout(() => {
         if (w > h) {
           album = "портрет";
@@ -106,21 +109,27 @@ function doImageTest() {
 
   var content = $('tbody#tbody');
   content.empty();
+  var sizes = 0;
+  var count = 0;
   let trans = db.transaction(['images'], 'readonly');
   //hard coded id
   let req = trans.objectStore('images').getAll();
   req.onsuccess = (e) => {
     let records = e.target.result;
     for (let i = 0; i < records.length; i++) {
+      sizes += parseFloat(records[i].size);
+      count++;
       if (records[i].bits === undefined) {
         var bits = "./nofile.png";
       } else {
         if ((/data:image/).test(records[i].bits)) {
-          var bits = records[i].bits; 
+          var bits = records[i].bits;
         } else {
           var bits = "data:image/jpeg;base64," + btoa(records[i].bits);
         }
       }
+      $('#sizes').text(sizes.toFixed(3));
+      $('#count').text(count);
       content.append('\
         <tr>\
         <td><img height="70px" src="'+ bits + '"></td>' +
@@ -278,8 +287,47 @@ function downImg(id) {
     if ((/data:image/i).test(rec.bits)) {
       $('#save').html('<a class="save" href="' + rec.bits + '" download="' + rec.name + '"></a>');
     } else {
-      $('#save').html('<a class="save" href="' +'data:image/jpeg;base64,'+ btoa(rec.bits) + '" download="' + rec.name + '"></a>');
+      $('#save').html('<a class="save" href="' + 'data:image/jpeg;base64,' + btoa(rec.bits) + '" download="' + rec.name + '"></a>');
     }
     document.getElementsByClassName("save")[0].click();
   }
 }
+
+let request = indexedDB.open(databaseName, dbVersion);
+
+request.onsuccess = function () {
+  var DB = this.result;
+  var size = 0;
+
+
+
+  var next = function (i) {
+    var data = new Uint8Array(0xFFFF);
+    crypto.getRandomValues(data);
+
+
+
+    size += data.length;
+    logmsg = 'size: ' + size + 'b ' + (size / (1024 * 1024 * 1024)) + 'gb';
+
+
+
+    var store = DB.transaction(['images'], 'readwrite').objectStore('images');
+    // var storeReq = store.add(data, 'images-' + i);
+    // storeReq.onsuccess = function () {
+    //   next(i + 1);
+    // };
+    // storeReq.onerror = function () {
+    //   console.log('storeReq error');
+    //   console.log(this.error);
+    // };
+  };
+  next(1);
+};
+setInterval(function () {
+  if (logmsg) {
+    console.log(logmsg);
+    logmsg = null;
+  }
+}, 1000);
+
