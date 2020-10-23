@@ -1,5 +1,5 @@
 let db;
-const databaseName = "ImageDb";
+var databaseName = "ImageDb";
 let dbVersion = 1;
 let dbReady = false;
 
@@ -9,9 +9,7 @@ const btnUpdate = document.getElementById("btn-update");
 document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('#pictureTest').addEventListener('change', doFile);
-  let d = initDb();
-
-  console.log(d + " D")
+  initDb();
 });
 
 
@@ -25,13 +23,13 @@ function initDb() {
   request.onsuccess = function (e) {
     db = e.target.result;
     doImageTest();
-
     console.log(' db opened');
   }
 
   request.onupgradeneeded = function (e) {
-    let db = e.target.result;
+    let db = e.target.result; console.log(db+"okey")
     db.createObjectStore('images', { keyPath: 'id', autoIncrement: true });
+    
     dbReady = true;
   }
 }
@@ -105,13 +103,13 @@ function doFile(e) {
 
 }
 
-function doImageTest() {
+async function doImageTest() {
 
   var content = $('tbody#tbody');
   content.empty();
   var sizes = 0;
   var count = 0;
-  let trans = db.transaction(['images'], 'readonly');
+  let trans = await db.transaction(['images'], 'readonly');
   //hard coded id
   let req = trans.objectStore('images').getAll();
   req.onsuccess = (e) => {
@@ -275,6 +273,7 @@ function deleteBtn(id) {
   request.onsuccess = function (evt) {
     console.log("deleted content");
   };
+  initDb();
   $('.form').css('display', 'none');
   doImageTest();
 }
@@ -293,41 +292,4 @@ function downImg(id) {
   }
 }
 
-let request = indexedDB.open(databaseName, dbVersion);
-
-request.onsuccess = function () {
-  var DB = this.result;
-  var size = 0;
-
-
-
-  var next = function (i) {
-    var data = new Uint8Array(0xFFFF);
-    crypto.getRandomValues(data);
-
-
-
-    size += data.length;
-    logmsg = 'size: ' + size + 'b ' + (size / (1024 * 1024 * 1024)) + 'gb';
-
-
-
-    var store = DB.transaction(['images'], 'readwrite').objectStore('images');
-    // var storeReq = store.add(data, 'images-' + i);
-    // storeReq.onsuccess = function () {
-    //   next(i + 1);
-    // };
-    // storeReq.onerror = function () {
-    //   console.log('storeReq error');
-    //   console.log(this.error);
-    // };
-  };
-  next(1);
-};
-setInterval(function () {
-  if (logmsg) {
-    console.log(logmsg);
-    logmsg = null;
-  }
-}, 1000);
 
