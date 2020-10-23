@@ -27,9 +27,9 @@ function initDb() {
   }
 
   request.onupgradeneeded = function (e) {
-    let db = e.target.result; console.log(db+"okey")
+    let db = e.target.result; console.log(db + "okey")
     db.createObjectStore('images', { keyPath: 'id', autoIncrement: true });
-    
+
     dbReady = true;
   }
 }
@@ -41,7 +41,7 @@ function doFile(e) {
   let size = parseFloat((file.size / 1024 / 1000).toFixed(3));
   let name = file.name;
   let type = file.type;
-  let date = file.lastModifiedDate.toLocaleDateString();
+  let data = file.lastModifiedDate.toLocaleDateString();
 
   var reader = new FileReader();
   //				reader.readAsDataURL(file);
@@ -57,6 +57,14 @@ function doFile(e) {
       return false;
     };
   }
+  let dates = data.split('.');
+  let d = dates[0];
+  let m = dates[1];
+  let y = dates[2];
+
+  var date = y+'-'+m+'-'+d;
+
+  //console.log("DAY " + year)
 
   var reader = new FileReader();
   reader.readAsBinaryString(file);
@@ -127,6 +135,7 @@ async function doImageTest() {
           var bits = "data:image/jpeg;base64," + btoa(records[i].bits);
         }
       }
+      //var date = new Date();
       $('#sizes').text(sizes.toFixed(3));
       $('#count').text(count);
       content.append('\
@@ -150,6 +159,9 @@ async function doImageTest() {
 
 function edit(id) {
   $('.form').css('display', 'block');
+
+  let d = [month, date, year] = (new Date('2014', '01', '12')).toLocaleDateString().split("/")
+  //console.log(d+"NEW DATE");
 
   var request = db.transaction(["images"], "readwrite")
     .objectStore("images")
@@ -190,7 +202,7 @@ $("#btn-update").on("click", async function (event) {
     var album = $("#album").val();
     var w = $("#w").val();
     var h = $("#h").val();
-
+    console.log(date + " DATE")
   } else {
 
     var reader = new FileReader();
