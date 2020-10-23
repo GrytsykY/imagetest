@@ -135,7 +135,6 @@ async function doImageTest() {
           var bits = "data:image/jpeg;base64," + btoa(records[i].bits);
         }
       }
-      //var date = new Date();
       $('#sizes').text(sizes.toFixed(3));
       $('#count').text(count);
       content.append('\
@@ -286,7 +285,6 @@ function deleteBtn(id) {
   request.onsuccess = function (evt) {
     console.log("deleted content");
   };
-  initDb();
   $('.form').css('display', 'none');
   doImageTest();
 }
