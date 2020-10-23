@@ -117,6 +117,7 @@ async function doImageTest() {
     for (let i = 0; i < records.length; i++) {
       sizes += parseFloat(records[i].size);
       count++;
+      var name = records[i].name.substr(0, 20);
       if (records[i].bits === undefined) {
         var bits = "./nofile.png";
       } else {
@@ -131,7 +132,7 @@ async function doImageTest() {
       content.append('\
         <tr>\
         <td><img height="70px" src="'+ bits + '"></td>' +
-        '<td>' + records[i].name + '</td><td>'
+        '<td>' + name + '</td><td>'
         + records[i].size + '</td><td>'
         + records[i].type + '</td><td>'
         + records[i].date + '</td><td>'
